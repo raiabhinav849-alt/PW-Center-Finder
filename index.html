@@ -1,14 +1,271 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Center Finder</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        .header {
+            background: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .search-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .button {
+            padding: 13px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-right: 10px;
+        }
+
+        .primary {
+            background: #111827;
+            color: white;
+        }
+
+        .secondary {
+            background: #e5e7eb;
+            color: #111;
+        }
+
+        .results {
+            margin-top: 25px;
+        }
+
+        .center-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .center-card h3 {
+            margin-bottom: 8px;
+        }
+
+        .center-card p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px auto;
+            }
+
+            .button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>Center Finder</h1>
+    <header class="header">
+        <h1>Center Finder</h1>
+        <p>Find the nearest center</p>
+    </header>
 
-    <p>Welcome to my Center Finder Tool</p>
+    <main class="container">
+
+        <section class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search city, area or pincode..."
+            >
+
+            <button
+                class="button primary"
+                onclick="searchCenters()">
+                Search Centers
+            </button>
+
+            <button
+                class="button secondary"
+                onclick="getLocation()">
+                📍 Use My Location
+            </button>
+
+        </section>
+
+        <section
+            id="results"
+            class="results">
+        </section>
+
+    </main>
+
+    <script>
+
+        const centers = [
+            {
+                name: "Sample Center",
+                city: "Varanasi",
+                address: "Varanasi, Uttar Pradesh",
+                pincode: "221001"
+            },
+            {
+                name: "Sample Center 2",
+                city: "Lucknow",
+                address: "Lucknow, Uttar Pradesh",
+                pincode: "226001"
+            }
+        ];
+
+        function searchCenters() {
+
+            const search =
+                document
+                .getElementById("searchInput")
+                .value
+                .toLowerCase()
+                .trim();
+
+            const results =
+                document.getElementById("results");
+
+            if (!search) {
+                results.innerHTML =
+                    "<p>Please enter a city, area or pincode.</p>";
+                return;
+            }
+
+            const matches = centers.filter(center =>
+
+                center.name.toLowerCase().includes(search) ||
+                center.city.toLowerCase().includes(search) ||
+                center.address.toLowerCase().includes(search) ||
+                center.pincode.includes(search)
+
+            );
+
+            if (matches.length === 0) {
+
+                results.innerHTML =
+                    "<p>No centers found.</p>";
+
+                return;
+            }
+
+            results.innerHTML = matches.map(center => `
+
+                <div class="center-card">
+
+                    <h3>${center.name}</h3>
+
+                    <p>📍 ${center.address}</p>
+
+                    <p>📮 ${center.pincode}</p>
+
+                    <button
+                        class="button primary">
+                        View Details
+                    </button>
+
+                </div>
+
+            `).join("");
+
+        }
+
+        function getLocation() {
+
+            if (!navigator.geolocation) {
+
+                alert(
+                    "Location is not supported by this browser."
+                );
+
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+
+                function(position) {
+
+                    const latitude =
+                        position.coords.latitude;
+
+                    const longitude =
+                        position.coords.longitude;
+
+                    alert(
+                        "Location detected!\n\nLatitude: "
+                        + latitude
+                        + "\nLongitude: "
+                        + longitude
+                    );
+
+                },
+
+                function() {
+
+                    alert(
+                        "Unable to get your location."
+                    );
+
+                }
+
+            );
+
+        }
+
+    </script>
 
 </body>
 </html>
