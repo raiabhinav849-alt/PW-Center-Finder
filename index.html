@@ -1,271 +1,936 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pathshala Centers | Physics Wallah</title>
+<style>
+  :root{
+    --navy:#0a1a3f;
+    --navy-2:#12266b;
+    --amber:#ffb703;
+    --amber-deep:#e89b00;
+    --bg:#f3f5fa;
+    --ink:#0f172a;
+    --sub:#5b6478;
+    --line:#e3e6ef;
+    --card:#ffffff;
+    --good:#1a7f5a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    min-height:100vh;
+  }
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+  /* ---------- Top brand bar ---------- */
+  .topbar{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+    padding:22px 24px 68px;
+    position:relative;
+    overflow:hidden;
+  }
+  .topbar::after{
+    content:"";
+    position:absolute;
+    right:-60px; top:-80px;
+    width:280px; height:280px;
+    background:radial-gradient(circle, rgba(255,183,3,0.18) 0%, transparent 70%);
+  }
+  .brandrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    max-width:720px;
+    margin:0 auto;
+  }
+  .logo-mark{
+    width:34px;height:34px;
+    background:var(--amber);
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;
+    color:var(--navy);
+    font-size:18px;
+    flex:none;
+  }
+  .wordmark{
+    font-size:19px;
+    font-weight:800;
+    letter-spacing:.03em;
+    color:#fff;
+  }
+  .wordmark span{color:var(--amber);}
+  .tagline{
+    max-width:720px;
+    margin:20px auto 0;
+    color:#fff;
+  }
+  .tagline .eyebrow{
+    font-size:11.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--amber);
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .tagline h1{
+    font-size:28px;
+    line-height:1.2;
+    margin:0 0 8px;
+    font-weight:800;
+  }
+  .tagline p{
+    margin:0;
+    color:#c9d1ea;
+    font-size:14.5px;
+    max-width:52ch;
+  }
+  .accent-line{
+    margin-top:16px;
+    width:56px;
+    height:3px;
+    border-radius:3px;
+    background:linear-gradient(90deg, var(--amber), transparent);
+  }
 
-    <title>Center Finder</title>
+  /* ---------- Search card ---------- */
+  .content{
+    max-width:720px;
+    margin:0 auto;
+    padding:0 20px 60px;
+  }
+  .search-card{
+    background:var(--card);
+    border-radius:14px;
+    box-shadow:0 18px 40px rgba(10,26,63,0.16);
+    padding:18px;
+    margin-top:-46px;
+    position:relative;
+    z-index:5;
+  }
+  .search-row{
+    display:flex;
+    gap:10px;
+    position:relative;
+  }
+  .search-icon{
+    position:absolute;
+    left:14px; top:50%;
+    transform:translateY(-50%);
+    color:var(--sub);
+    pointer-events:none;
+    font-size:16px;
+  }
+  input[type=text]{
+    flex:1;
+    padding:15px 16px 15px 40px;
+    font-size:15.5px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    background:#fafbfd;
+    color:var(--ink);
+    font-family:inherit;
+  }
+  input[type=text]:focus{
+    outline:none;
+    border-color:var(--amber-deep);
+    background:#fff;
+    box-shadow:0 0 0 4px rgba(255,183,3,0.15);
+  }
+  button.go{
+    padding:0 22px;
+    font-size:14.5px;
+    font-weight:700;
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    letter-spacing:.02em;
+  }
+  button.go:hover{background:var(--navy-2);}
+  button.go:disabled{background:#a7adc2;cursor:wait;}
+  .hint{
+    font-size:12.5px;
+    color:var(--sub);
+    margin:10px 2px 0;
+  }
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  /* ---------- Autocomplete dropdown ---------- */
+  .suggest{
+    position:relative;
+  }
+  .suggest-panel{
+    position:absolute;
+    left:0; right:0; top:calc(100% + 8px);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:0 14px 34px rgba(10,26,63,0.14);
+    overflow:hidden;
+    z-index:20;
+    max-height:340px;
+    overflow-y:auto;
+    display:none;
+  }
+  .suggest-panel.open{display:block;}
+  .suggest-group-label{
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--sub);
+    font-weight:700;
+    padding:10px 16px 4px;
+  }
+  .suggest-item{
+    padding:10px 16px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .suggest-item:hover, .suggest-item.active{background:#fef6e0;}
+  .si-main{font-size:14.5px;font-weight:600;color:var(--ink);}
+  .si-sub{font-size:12px;color:var(--sub);}
+  .si-badge{
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    padding:3px 8px;
+    border-radius:20px;
+    flex:none;
+  }
+  .si-badge.city{background:#e8f0ff;color:#1e4bb8;}
+  .si-badge.state{background:#eafbf1;color:var(--good);}
+  .si-badge.center{background:#fff2df;color:var(--amber-deep);}
+  .suggest-empty{
+    padding:16px;
+    font-size:13px;
+    color:var(--sub);
+  }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #222;
-        }
+  /* ---------- Status ---------- */
+  .status{
+    font-size:13.5px;
+    color:var(--sub);
+    min-height:18px;
+    margin:16px 4px 4px;
+  }
+  .status.err{color:#c0392b;}
 
-        .header {
-            background: #ffffff;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
+  /* ---------- Results ---------- */
+  .result-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin:22px 4px 12px;
+  }
+  .result-head h2{
+    font-size:15px;
+    margin:0;
+    font-weight:700;
+  }
+  .result-head .count{
+    font-size:12px;
+    color:var(--sub);
+  }
 
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
+  .row{
+    position:relative;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px 16px 60px;
+    margin-bottom:10px;
+    transition:box-shadow .15s;
+  }
+  .row:hover{box-shadow:0 6px 18px rgba(10,26,63,0.08);}
+  .row.nearest{
+    border-color:var(--amber-deep);
+    background:linear-gradient(0deg,#fffaf0,#ffffff);
+  }
+  .row-badge{
+    position:absolute;
+    left:16px; top:16px;
+    width:28px;height:28px;
+    border-radius:50%;
+    background:var(--navy);
+    color:#fff;
+    font-weight:800;
+    font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .row.nearest .row-badge{background:var(--amber-deep);}
+  .r-name{font-size:17.5px;font-weight:800;margin:0 0 4px;color:var(--ink);}
+  .r-meta{font-size:12.5px;color:var(--sub);}
 
-        .header p {
-            color: #666;
-        }
+  .row.expandable{cursor:pointer;}
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-        }
+  .addr-collapse{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+  }
+  .addr-inner{
+    padding-top:10px;
+    margin-top:9px;
+    border-top:1px dashed var(--line);
+  }
+  .addr-block{
+    margin-bottom:12px;
+  }
+  .addr-block:last-child{
+    margin-bottom:0;
+  }
+  .addr-separator{
+    height:1px;
+    background:var(--line);
+    margin:12px 0;
+  }
+  .addr-label{
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--sub);
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .addr-text{
+    font-size:13px;
+    color:var(--ink);
+    line-height:1.55;
+  }
+  .toggle-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    margin-top:10px;
+    background:none;
+    border:none;
+    padding:0;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--amber-deep);
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .toggle-btn .chev{
+    display:inline-block;
+    font-size:10px;
+  }
+  .r-dist{
+    display:inline-block;
+    margin-top:9px;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--good);
+    background:#eafbf1;
+    padding:4px 10px;
+    border-radius:20px;
+  }
+  .r-dist-fallback{
+    display:inline-block;
+    margin-top:9px;
+    margin-left:6px;
+    font-size:11px;
+    color:var(--sub);
+    font-style:italic;
+  }
+  .r-tag{
+    display:inline-block;
+    margin-top:9px;
+    margin-left:6px;
+    font-size:10.5px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    background:var(--amber);
+    color:var(--navy);
+    padding:4px 9px;
+    border-radius:20px;
+    font-weight:800;
+  }
 
-        .search-box {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
+  /* ---------- How to use ---------- */
+  .steps-card{
+    background:var(--card);
+    border-radius:14px;
+    border:1px solid var(--line);
+    padding:20px 22px 22px;
+    margin-top:16px;
+  }
+  .steps-title{
+    font-size:11.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--amber-deep);
+    margin-bottom:14px;
+  }
+  .steps-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:16px;
+  }
+  @media(max-width:600px){
+    .steps-grid{grid-template-columns:1fr;}
+  }
+  .step{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .step-num{
+    flex:none;
+    width:26px;height:26px;
+    border-radius:50%;
+    background:var(--navy);
+    color:var(--amber);
+    font-weight:800;
+    font-size:12.5px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .step-text{
+    font-size:13px;
+    color:var(--sub);
+    line-height:1.5;
+  }
+  .step-text b{color:var(--ink);}
 
-        .search-box input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-
-        .button {
-            padding: 13px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            margin-right: 10px;
-        }
-
-        .primary {
-            background: #111827;
-            color: white;
-        }
-
-        .secondary {
-            background: #e5e7eb;
-            color: #111;
-        }
-
-        .results {
-            margin-top: 25px;
-        }
-
-        .center-card {
-            background: white;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .center-card h3 {
-            margin-bottom: 8px;
-        }
-
-        .center-card p {
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                margin: 20px auto;
-            }
-
-            .button {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-        }
-    </style>
+  footer{
+    text-align:center;
+    font-size:11.5px;
+    color:#a3aabd;
+    margin-top:30px;
+    line-height:1.8;
+  }
+  footer b{color:var(--sub);font-weight:700;}
+</style>
 </head>
-
 <body>
 
-    <header class="header">
-        <h1>Center Finder</h1>
-        <p>Find the nearest center</p>
-    </header>
+<div class="topbar">
+  <div class="brandrow">
+    <div class="logo-mark">P</div>
+    <div class="wordmark">PHYSICS <span>WALLAH</span></div>
+  </div>
+  <div class="tagline">
+    <div class="eyebrow">Pathshala Centers &middot; Center Locator</div>
+    <h1>Find your nearest Pathshala Center</h1>
+    <p>Type any city, state, or center name — even a rough spelling works. We'll surface matches as you type and show the nearest centers with distance.</p>
+    <div class="accent-line"></div>
+  </div>
+</div>
 
-    <main class="container">
+<div class="content">
+  <div class="search-card">
+    <form id="f" autocomplete="off">
+      <div class="search-row suggest" id="suggestWrap">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="cityInput" placeholder="Search a city, state, or center..." autocomplete="off">
+        <button type="submit" class="go" id="btn">Search</button>
+        <div class="suggest-panel" id="suggestPanel"></div>
+      </div>
+    </form>
+    <div class="hint">Tip: search a state name (e.g. "Odisha") to see every center in that state.</div>
+  </div>
 
-        <section class="search-box">
+  <div class="steps-card">
+    <div class="steps-title">How to use</div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><b>Type</b> your city, village, state, or a center name in the search box above.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><b>Pick</b> a suggestion from the dropdown, or just hit <b>Search</b>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><b>View</b> your nearest centers, ranked by real road distance &amp; drive time.</div>
+      </div>
+    </div>
+  </div>
 
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search city, area or pincode..."
-            >
+  <div class="status" id="status"></div>
+  <div id="results"></div>
 
-            <button
-                class="button primary"
-                onclick="searchCenters()">
-                Search Centers
-            </button>
+  <footer>Distances are calculated via live road routing. If the routing service is briefly unavailable, a straight-line estimate is shown instead.<br>Made with care by <b>Ravi Sharma</b></footer>
+</div>
 
-            <button
-                class="button secondary"
-                onclick="getLocation()">
-                📍 Use My Location
-            </button>
+<script>
+// ---- Center master data: name, state, region, lat, lng ----
+const CENTERS = [
+  {name:"Purnea", state:"Bihar", region:"Region 1 (Patna)", lat:25.7771, lng:87.4753, address:"Plot no 5, Madhubani chowk in front madhubani Mhaveer, Purnia, Bihar 854301"},
+  {name:"Darbhanga - Kathalbari", state:"Bihar", region:"Region 1 (Patna)", lat:26.1542, lng:85.8918, address:"1st floor, Above Union bank, GM road, Near Income Tax Chowk, Opposite Reliance Trends, Darbhanga, Bihar-846004"},
+  {name:"Ghazipur", state:"Uttar Pradesh", region:"Region 1 (Patna)", lat:25.5787, lng:83.5773, address:"Plot No. 51 & 52, Peer Nagar, Nearest V2 Mall, Ghazipur, Uttar Pradesh – 233232"},
+  {name:"Ballia", state:"Uttar Pradesh", region:"Region 1 (Patna)", lat:25.7570, lng:84.1487, address:"Baba Marriage Haal, 1st & 2nd floor, Near Polytechnic Chouraha, Tikhampur, Post- Deokali, District- Ballia, Uttar Pradesh - 277001"},
+  {name:"Deoria", state:"Uttar Pradesh", region:"Region 1 (Patna)", lat:26.5024, lng:83.7791, address:"House No. 506, Hanuman Mandir Road, Adjacent SBI, Raghav Nagar, Deoria, Uttar Pradesh - 274001"},
+  {name:"Nalanda", state:"Bihar", region:"Region 1 (Patna)", lat:25.1972, lng:85.5213, address:"Behind Dhaneshwar Ghat Mandir, Bihar Sharif, Nalanda- 803101"},
+  {name:"Samastipur", state:"Bihar", region:"Region 1 (Patna)", lat:25.8607, lng:85.7803, address:"Bypass Road, Behind Purani Durga Sthan Mandir, Samastipur - 848101"},
+  {name:"Patna", state:"Bihar", region:"Region 1 (Patna)", lat:25.6127, lng:85.1414, address:"Ashiana Mahendra Enclave, Patna, Saguna More, 3rd and 4th Floor, Patna-801503"},
+  {name:"Saharsa", state:"Bihar", region:"Region 1 (Patna)", lat:25.8804, lng:86.5996, address:"Near Junior DPS and DPS Saharsa, Bamfar Chowk, Gautam Nagar, Gangjala, Saharsa, Bihar, Pin 852201"},
+  {name:"Sitamarhi", state:"Bihar", region:"Region 1 (Patna)", lat:26.5942, lng:85.4924, address:"Baban Munni Charitable Foundation, Opposite Dumra Jail gate, Sai Mandir parishar, Sitamarhi, Bihar, Pin-843301"},
 
-        </section>
+  {name:"Sasaram", state:"Bihar", region:"Region 2 (Jharkhand)", lat:24.9500, lng:84.0300, address:"2nd Floor, Premchand Path Marg, Punjabi Mohalla, Near Over Bridge, Gorakshini, Sasaram, Bihar, 821115"},
+  {name:"Aurangabad", state:"Bihar", region:"Region 2 (Jharkhand)", lat:24.7515, lng:84.3742, address:"Bhanupratap Complex, near Ambika Public School, Karma Road, Aurangabad, Bihar - 824101"},
+  {name:"Gaya", state:"Bihar", region:"Region 2 (Jharkhand)", lat:24.7955, lng:85.0002, address:"Greenfield English School, New Area, Bisar Talab, Gaya- 823001"},
+  {name:"Deoghar", state:"Jharkhand", region:"Region 2 (Jharkhand)", lat:24.4823, lng:86.6961, address:"2nd & 3rd Floor, Near Hyundai Showroom, Barmasiya, Deoghar"},
+  {name:"Giridih", state:"Jharkhand", region:"Region 2 (Jharkhand)", lat:24.1913, lng:86.3050, address:"2nd floor, Arham Square, In front of Union Bank, Beside Mahila Thana, Giridih Dumri Road, Bada Chowk, Giridih, Jharkhand- 815301"},
+  {name:"Hazaribagh", state:"Jharkhand", region:"Region 2 (Jharkhand)", lat:23.9925, lng:85.3637, address:"Matwari house, Yasoda bawan, opposite Gandhi maidan, Hazaribagh, Jharkhand-825301"},
 
-        <section
-            id="results"
-            class="results">
-        </section>
+  {name:"Nadia", state:"West Bengal", region:"Region 2 (Jharkhand)", lat:23.4010, lng:88.5019, address:"2nd floor & 4th Floor, Bazar Kolkata Building, Krishnanagar, Nadia, West Bengal"},
+  {name:"Murshidabad", state:"West Bengal", region:"Region 2 (Jharkhand)", lat:24.1833, lng:88.2667, address:"Bhakuri, Near 1no Panchayat Office, NH-12, Berhampore, Murshidabad-742165, West Bengal"},
 
-    </main>
+  {name:"Korba - City Center", state:"Chhattisgarh", region:"Region 3 (Orissa/Chhattisgarh)", lat:22.3595, lng:82.7501, address:"2nd Floor, Shanti Hero Showroom, Plot Number 919, Kosabadi Chowk, Korba - 495677, Chhattisgarh, India"},
+  {name:"Korba - NTPC", state:"Chhattisgarh", region:"Region 3 (Orissa/Chhattisgarh)", lat:22.3800, lng:82.6900, address:"DPS NTPC School Campus, Near Silver Jubilee Park, Korba, Chhattisgarh"},
+  {name:"Raigarh", state:"Chhattisgarh", region:"Region 3 (Orissa/Chhattisgarh)", lat:21.8974, lng:83.3950, address:"Physics Wallah, Add. Vidya Arcade, Near Carmel school, Opp. Bank of Baroda, Dhimrapur Road, Raigarh (Chhattisgarh) Pin 496001"},
 
-    <script>
+  {name:"Sambalpur", state:"Odisha", region:"Region 3 (Orissa/Chhattisgarh)", lat:21.4669, lng:83.9756, address:"Unit-7, Plot No-266, Modipada, Near GM College, Sambalpur, Odisha 768001"},
+  {name:"Rourkela", state:"Odisha", region:"Region 3 (Orissa/Chhattisgarh)", lat:22.2492, lng:84.8828, address:"PW office Rourkela, Near Kalyan Jewellers, Panposh Road, Civil township, Rourkela -769004, Dist - Sundargarh, Odisha, India"},
+  {name:"Balasore", state:"Odisha", region:"Region 3 (Orissa/Chhattisgarh)", lat:21.4942, lng:86.9317, address:"Gupta Building, R.K. Proof Rd, near Samsung Service Centre, Padhuan Pada, Rajabagicha, Balasore, Odisha 756001"},
+  {name:"Berhampur", state:"Odisha", region:"Region 3 (Orissa/Chhattisgarh)", lat:19.3149, lng:84.7941, address:"PW Gandhinagar main line, near DAV School, Berhampur, Odisha 760001"},
+  {name:"Cuttack", state:"Odisha", region:"Region 3 (Orissa/Chhattisgarh)", lat:20.4625, lng:85.8828, address:"PW office, Arundwaya market, Link road, Infront of Sarojini Hospital, Badambadi, Cuttack, Pin-753012"},
 
-        const centers = [
-            {
-                name: "Sample Center",
-                city: "Varanasi",
-                address: "Varanasi, Uttar Pradesh",
-                pincode: "221001"
-            },
-            {
-                name: "Sample Center 2",
-                city: "Lucknow",
-                address: "Lucknow, Uttar Pradesh",
-                pincode: "226001"
-            }
-        ];
+  {name:"Sonipat", state:"Haryana", region:"Region 4 (North)", lat:28.9931, lng:77.0151, address:"6578, Adarsh Nagar, Bus Stand, Sonipat, Haryana - 131304"},
+  {name:"Narnaul", state:"Haryana", region:"Region 4 (North)", lat:28.0455, lng:76.1069, address:"1st floor, 331 Ganpati Marbles, Huda Sector 1, Mahindergarh Road, Opposite power house, Narnaul, Haryana 123001, India"},
 
-        function searchCenters() {
+  {name:"Bijnor", state:"Uttar Pradesh", region:"Region 4 (North)", lat:29.3730, lng:78.1360, address:"1st & 2nd floor, Thakur Balwant Singh Gahlot Enclave, L.B.S. Mharana Pratap Nagar, B-14 Nai Basti, Bijnor, U.P. 246701"},
+  {name:"Jhansi", state:"Uttar Pradesh", region:"Region 4 (North)", lat:25.4484, lng:78.5685, address:"1st and 2nd Floor, Elite Circle Baidehi Complex, Civil Lines, Jhokan Bagh, Jhansi, Uttar Pradesh 284001"},
+  {name:"Mathura", state:"Uttar Pradesh", region:"Region 4 (North)", lat:27.4924, lng:77.6737, address:"2054, Chowki Bagh Bahadur, in front of Brijwasi Royal, Mathura, Uttar Pradesh 281001"},
+  {name:"Haldwani", state:"Uttar Pradesh", region:"Region 4 (North)", lat:29.2183, lng:79.5130, address:"3rd Floor, Guru Ramdas Tower, Above State Bank of India SME Bhotia Parao Branch, Near Durga City Center, Bareilly - Nainital Rd, Haldwani, Uttarakhand - 263139"},
+  {name:"Shahjahanpur", state:"Uttar Pradesh", region:"Region 4 (North)", lat:27.8804, lng:79.9109, address:"Plot No. 12, Near Guru Nanak Hospital, Opposite V Bazaar, Shahjahanpur, UP 242001"},
+  {name:"Lakhimpur Kheri", state:"Uttar Pradesh", region:"Region 4 (North)", lat:27.9475, lng:80.7772, address:"Jhandi Complex- Block A, opp. Reliance Trends, Near Roadways Bus Stand, Bhadur Nagar, Maharaj Nagar, Lakhimpur Kheri, Uttar Pradesh - 262701"},
 
-            const search =
-                document
-                .getElementById("searchInput")
-                .value
-                .toLowerCase()
-                .trim();
+  {name:"Jaunpur", state:"Uttar Pradesh", region:"Region 5 (UP South & MP)", lat:25.7490, lng:82.6837, address:"Kamla Complex, 257-A, Line Bazaar Rd, near Gayatri Shakti Pith, Hussenabad, Husainabad, Jaunpur, Uttar Pradesh 222002"},
+  {name:"Ayodhya", state:"Uttar Pradesh", region:"Region 5 (UP South & MP)", lat:26.7993, lng:82.1998, address:"2nd Floor, A.K Plaza Infront of JIO Regional office, Saketpuri, Devkali Bypass, Ayodhya Cantt (Faizabad)"},
+  {name:"Rae Bareli", state:"Uttar Pradesh", region:"Region 5 (UP South & MP)", lat:26.2309, lng:81.2334, address:"Gate No. 107/1 & House No. 499 to 499/1, Ward No 24, Kacheri Road, Village Ahmadpur Nazrool, Pargana Tehsil & Dist. Raebareli, UP - 229001"},
 
-            const results =
-                document.getElementById("results");
+  {name:"Rewa", state:"Madhya Pradesh", region:"Region 5 (UP South & MP)", lat:24.5364, lng:81.3037, address:"Address 1\n2nd & 3rd Floor, Above Titan Showroom, Near John Tower - College Chauraha, Shilpi Plaza Road, Rewa, Madhya Pradesh - 486001\n_______________________________________________\nAddress 2\n3rd Floor, Kiran Plaza, Above Blackberry Store, Opp. Jio Petrol Pump, Near New Bus Stand, Prayagraj Road, Ravindra Nagar, Rewa"},
+  {name:"Satna", state:"Madhya Pradesh", region:"Region 5 (UP South & MP)", lat:24.5793, lng:80.8322, address:"HIG-3, Vimla Tower, 2nd and 3rd floor, Bharhut Nagar, Satna, Madhya Pradesh 485001"},
+  {name:"Sagar", state:"Madhya Pradesh", region:"Region 5 (UP South & MP)", lat:23.8388, lng:78.7378, address:"2nd / 3rd floor, Ramsaroj Plaza, Jhansi Rd, Makroniya, Rajakhedi, Madhya Pradesh 470004"},
+  {name:"Chhatarpur", state:"Madhya Pradesh", region:"Region 5 (UP South & MP)", lat:24.9180, lng:79.5941, address:"Kanchan Bhawan, infront of Maharaja College, Chhatarpur 471001"},
+  {name:"Chhindwara", state:"Madhya Pradesh", region:"Region 5 (UP South & MP)", lat:22.0574, lng:78.9382, address:"SN Tower, Behind Pentaloons, Nagpur Road, Chhindwara (MP) Pin: 480001"},
 
-            if (!search) {
-                results.innerHTML =
-                    "<p>Please enter a city, area or pincode.</p>";
-                return;
-            }
+  {name:"Yavatmal", state:"Maharashtra", region:"Region 6 (North East Maharashtra)", lat:20.3888, lng:78.1204, address:"3rd Floor, Ratan Imperial, Mahadev Mandir road, Besides Sanjeevani Multispeciality Hospital, Yavatmal, 445001"},
+  {name:"Amravati - Gadge Nagar", state:"Maharashtra", region:"Region 6 (North East Maharashtra)", lat:20.9320, lng:77.7523, address:"Gadge Nagar - 2nd Floor, Creative Heights, in front of Panjabrao Deshmukh Polytechnic College, Gadge Nagar, Amravati, Maharashtra 444603"},
+  {name:"Chandrapur", state:"Maharashtra", region:"Region 6 (North East Maharashtra)", lat:19.9615, lng:79.2961, address:"Beside Jubilee Highschool, Kasturba Road, near Gauture Hospital, Chandrapur, Maharashtra, pin code 442401"},
+  {name:"Hingoli", state:"Maharashtra", region:"Region 6 (North East Maharashtra)", lat:19.7150, lng:77.1495, address:"CTS no. 2627/176,177, Shri Hansraj Enclave, near Podar International School, Jwala Palshi road, Hingoli, Maharashtra 431513"},
+  {name:"Gondia", state:"Maharashtra", region:"Region 6 (North East Maharashtra)", lat:21.4602, lng:80.1922, address:"Platinum Plaza, Ward No 9, Lohiya Ward, Pal Chowk, Rail Toly, Bhandarkar Road, Near State Bank of India, Gondia, Maharashtra"},
+  {name:"Parbhani", state:"Maharashtra", region:"Region 6 (North East Maharashtra)", lat:19.2704, lng:76.7601, address:"Shop no. 2, Sontakke Complex, Infront of Vyankatesh Balaji Mandir, Karegaon Road, Parbhani, Maharashtra - 431401"},
+  {name:"Wardha", state:"Maharashtra", region:"Region 6 (North East Maharashtra)", lat:20.7453, lng:78.6022, address:"New Arts College Road, Rashtrasant Aarvi Naka Square, beside Siddhivinayak Hospital, Pipri, Wardha, Maharashtra, PIN 442001"},
+  {name:"Amravati - Rajapeth", state:"Maharashtra", region:"Region 6 (North East Maharashtra)", lat:20.9374, lng:77.7796, address:"Rajapeth Centre - 3rd Floor, Jaiswal Heights, in front of Mantri Motors, Rajapeth, Amravati, Maharashtra 444601"},
 
-            const matches = centers.filter(center =>
+  {name:"Jalgaon", state:"Maharashtra", region:"Region 7 (North Maharashtra)", lat:21.0077, lng:75.5626, address:"3rd Floor, City Centre, Railway Station Rd, Near Govinda Rickshaw Stop, Pratap Nagar, Jalgaon, Maharashtra 425001"},
+  {name:"Ahmednagar - Ahilyanagar", state:"Maharashtra", region:"Region 7 (North Maharashtra)", lat:19.0952, lng:74.7496, address:"2nd Floor, Khandelwaal Towers, Gulmohar Rd, Opp. Om Sweets, Savedi, Ahilyanagar, Maharashtra 414003"},
+  {name:"Buldhana", state:"Maharashtra", region:"Region 7 (North Maharashtra)", lat:20.5293, lng:76.1804, address:"Old Ajispur road, Rajeshwar Nagar, Sagwan, Buldhana - 443001"},
+  {name:"Beed", state:"Maharashtra", region:"Region 7 (North Maharashtra)", lat:18.9891, lng:75.7601, address:"SBI Ambika chowk branch, Near Narayana e-techno school, Canal Road, Beed"},
+  {name:"Dhule", state:"Maharashtra", region:"Region 7 (North Maharashtra)", lat:20.9042, lng:74.7749, address:"J.S. Tower, Plot no.1, Professor colony, Near Jaihind college, Deopur, Dhule. 424002"},
+  {name:"Jalna", state:"Maharashtra", region:"Region 7 (North Maharashtra)", lat:19.8410, lng:75.8864, address:"Shakun Plaza, CTS No. 4076, Jijamata Praveshdwar Chowk, Amber Hotel Road, Jalna, Maharashtra 431203"},
+  {name:"Baramati", state:"Maharashtra", region:"Region 7 (North Maharashtra)", lat:18.1514, lng:74.5815, address:"Shree Business Plaza, Gate No. 160, Plot No. 29, Medical Colleges Road, Mahila Hospital near Sahyadri Nagar, Opp Mehata Tower, Tadulwadi, Baramati, Pune - 413102"},
 
-                center.name.toLowerCase().includes(search) ||
-                center.city.toLowerCase().includes(search) ||
-                center.address.toLowerCase().includes(search) ||
-                center.pincode.includes(search)
+  {name:"Hubli", state:"Karnataka", region:"Region 8 (South Maharashtra & Karnataka)", lat:15.3647, lng:75.1240, address:"Ground Floor, 34A/3976, Besides Impulse PU College, Sirur Park, Vidyanagar, Hubli - 580021"},
+  {name:"Bidar", state:"Karnataka", region:"Region 8 (South Maharashtra & Karnataka)", lat:17.9104, lng:77.5199, address:"Kudre Educational Campus, plot No. 18-3-321/75, Hanuman Nagar, Chidri main road, Bidar, Karnataka 585403"},
+  {name:"Kalaburagi", state:"Karnataka", region:"Region 8 (South Maharashtra & Karnataka)", lat:17.3297, lng:76.8343, address:"Sanjeevini Complex, Plot No 106, 2nd & 3rd Floor, PNT Colony Road, Near HDFC Bank, Kalaburagi, 585102"},
+  {name:"Dharwad", state:"Karnataka", region:"Region 8 (South Maharashtra & Karnataka)", lat:15.4589, lng:75.0078, address:"1st Floor, GRT Square Building, Opposite NTTF BRTS bus stop, P.B. Road, Dharwad 580001"},
+  {name:"Kolhapur", state:"Maharashtra", region:"Region 8 (South Maharashtra & Karnataka)", lat:16.7050, lng:74.2433, address:"3rd & 4th Floor, B-wing, Royal 09 Tourist Business Hub, 204, E Ward, Station Road, New Shahupuri, Kolhapur - 416001"},
+  {name:"Solapur", state:"Maharashtra", region:"Region 8 (South Maharashtra & Karnataka)", lat:17.6599, lng:75.9064, address:"Oceans, B-Building, 11A Murarji Peth, Besides Oasis Mall, Solapur - 413001"},
+  {name:"Satara", state:"Maharashtra", region:"Region 8 (South Maharashtra & Karnataka)", lat:17.6805, lng:74.0183, address:"PW Vidyapeeth Pathshala, Behind Hotel Manasi Pride, Yashoda Nagar, Satara-415001"},
+  {name:"Sangli", state:"Maharashtra", region:"Region 8 (South Maharashtra & Karnataka)", lat:16.8524, lng:74.5815, address:"13561 Vasant Colony Guest House, Sangli-Miraj Road, Near Vodafone Office, Sangli"},
+  {name:"Belagavi", state:"Karnataka", region:"Region 8 (South Maharashtra & Karnataka)", lat:15.8497, lng:74.4977, address:"Address not available yet"},
+  {name:"Vijayapura", state:"Karnataka", region:"Region 8 (South Maharashtra & Karnataka)", lat:16.8302, lng:75.7100, address:"Address not available yet"},
 
-            );
+  {name:"Nagaon", state:"Assam", region:"Region 9 (Assam)", lat:26.3480, lng:92.6840, address:"2nd Floor, Regal Arcade, Dhaka Patty, BB Road, Nagaon, Assam 782001"},
+  {name:"Barpeta", state:"Assam", region:"Region 9 (Assam)", lat:26.3220, lng:91.0090, address:"Ojah Complex, L.C.N Road, Barpeta Town, Dist. - Barpeta, Assam -781301"},
+  {name:"Tezpur", state:"Assam", region:"Region 9 (Assam)", lat:26.6338, lng:92.8000, address:"Opposite Don Bosco School, Near R.D Motors, Parua Chariali, Tezpur, Sonitpur - 784154"},
+  {name:"Dibrugarh", state:"Assam", region:"Region 9 (Assam)", lat:27.4728, lng:94.9120, address:"Opp. Police Guest House, Phoolbagan, Dibrugarh, Assam 786001"},
+  {name:"Jorhat", state:"Assam", region:"Region 9 (Assam)", lat:26.7509, lng:94.2037, address:"2nd Floor, Abhinash Bibah Bhawan, Old Circuit House Road, Near Chandra Prabha Eye Hospital, Jorhat, Assam-785001"},
+];
 
-            if (matches.length === 0) {
+const STATES = [...new Set(CENTERS.map(c => c.state))].sort();
 
-                results.innerHTML =
-                    "<p>No centers found.</p>";
+const form = document.getElementById('f');
+const input = document.getElementById('cityInput');
+const statusEl = document.getElementById('status');
+const resultsEl = document.getElementById('results');
+const btn = document.getElementById('btn');
+const suggestPanel = document.getElementById('suggestPanel');
+const suggestWrap = document.getElementById('suggestWrap');
 
-                return;
-            }
+let debounceTimer = null;
+let activeGeoSuggestion = null; // {lat,lng,label} when a city suggestion is picked
 
-            results.innerHTML = matches.map(center => `
+function formatMins(mins){
+  const h = Math.floor(mins/60);
+  const m = Math.round(mins%60);
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
 
-                <div class="center-card">
+function haversine(lat1, lon1, lat2, lon2){
+  const R = 6371;
+  const toRad = d => d * Math.PI/180;
+  const dLat = toRad(lat2-lat1);
+  const dLon = toRad(lon2-lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R*c;
+}
 
-                    <h3>${center.name}</h3>
+async function roadDistance(lat1, lng1, lat2, lng2){
+  const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=false`;
+  try{
+    const res = await fetch(url);
+    if(!res.ok) return null;
+    const data = await res.json();
+    if(data.code !== 'Ok' || !data.routes || !data.routes.length) return null;
+    return { km: data.routes[0].distance / 1000, mins: data.routes[0].duration / 60 };
+  }catch(e){ return null; }
+}
 
-                    <p>📍 ${center.address}</p>
+function pickIndianFeatures(features, fallbackAll){
+  const inIndia = (features||[]).filter(f => (f.properties.country||'').toLowerCase() === 'india');
+  return inIndia.length ? inIndia : (fallbackAll ? (features||[]) : []);
+}
 
-                    <p>📮 ${center.pincode}</p>
+async function geocode(place){
+  const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(place)}&limit=5&lang=en`;
+  const res = await fetch(url);
+  if(!res.ok) return null;
+  const data = await res.json();
+  const feats = pickIndianFeatures(data.features, true);
+  if(!feats.length) return null;
+  const f = feats[0];
+  const [lon, lat] = f.geometry.coordinates;
+  const p = f.properties;
+  const label = p.name || p.city || p.county || place;
+  return { lat, lng: lon, label };
+}
 
-                    <button
-                        class="button primary">
-                        View Details
-                    </button>
+async function geocodeSuggestions(place){
+  const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(place)}&limit=6&lang=en`;
+  try{
+    const res = await fetch(url);
+    if(!res.ok) return [];
+    const data = await res.json();
+    const feats = pickIndianFeatures(data.features, true);
+    const seen = new Set();
+    const out = [];
+    feats.forEach(f => {
+      const p = f.properties;
+      const label = p.name || p.city || p.county;
+      if(!label || seen.has(label)) return;
+      seen.add(label);
+      const [lon, lat] = f.geometry.coordinates;
+      const sub = [p.state, p.country].filter(Boolean).join(', ');
+      out.push({ type:'city', label, sub, lat, lng: lon });
+    });
+    return out;
+  }catch(e){ return []; }
+}
 
-                </div>
+function localMatches(q){
+  const qq = q.toLowerCase();
+  const stateHits = STATES.filter(s => s.toLowerCase().includes(qq))
+    .map(s => ({type:'state', label:s, sub: `${CENTERS.filter(c=>c.state===s).length} centers`}));
+  const centerHits = CENTERS.filter(c => c.name.toLowerCase().includes(qq))
+    .map(c => ({type:'center', label:c.name, sub:`${c.state} · ${c.region}`, lat:c.lat, lng:c.lng}));
+  return {stateHits, centerHits};
+}
 
-            `).join("");
+function renderSuggestPanel({stateHits, centerHits, cityHits}, loading){
+  let html = '';
+  if(stateHits.length){
+    html += `<div class="suggest-group-label">States</div>`;
+    stateHits.forEach(s => {
+      html += `<div class="suggest-item" data-type="state" data-label="${s.label}">
+        <div><div class="si-main">${s.label}</div><div class="si-sub">${s.sub}</div></div>
+        <span class="si-badge state">State</span></div>`;
+    });
+  }
+  if(centerHits.length){
+    html += `<div class="suggest-group-label">Centers</div>`;
+    centerHits.forEach(c => {
+      html += `<div class="suggest-item" data-type="center" data-label="${c.label}">
+        <div><div class="si-main">${c.label}</div><div class="si-sub">${c.sub}</div></div>
+        <span class="si-badge center">Center</span></div>`;
+    });
+  }
+  if(cityHits && cityHits.length){
+    html += `<div class="suggest-group-label">Places</div>`;
+    cityHits.forEach((c,i) => {
+      html += `<div class="suggest-item" data-type="city" data-idx="${i}">
+        <div><div class="si-main">${c.label}</div><div class="si-sub">${c.sub}</div></div>
+        <span class="si-badge city">City</span></div>`;
+    });
+  }
+  if(!html){
+    html = `<div class="suggest-empty">${loading ? 'Searching...' : 'No matches yet — keep typing or press Search.'}</div>`;
+  }
+  suggestPanel.innerHTML = html;
+  suggestPanel.classList.add('open');
 
-        }
+  // attach handlers
+  suggestPanel.querySelectorAll('.suggest-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const type = el.getAttribute('data-type');
+      if(type === 'state'){
+        input.value = el.getAttribute('data-label');
+        closeSuggest();
+        runStateSearch(el.getAttribute('data-label'));
+      } else if(type === 'center'){
+        input.value = el.getAttribute('data-label');
+        closeSuggest();
+        showSingleCenter(el.getAttribute('data-label'));
+      } else if(type === 'city'){
+        const idx = parseInt(el.getAttribute('data-idx'));
+        const pick = lastCityHits[idx];
+        input.value = pick.label;
+        activeGeoSuggestion = pick;
+        closeSuggest();
+        runCitySearch(pick.label, pick);
+      }
+    });
+  });
+}
 
-        function getLocation() {
+let lastCityHits = [];
 
-            if (!navigator.geolocation) {
+function closeSuggest(){
+  suggestPanel.classList.remove('open');
+}
 
-                alert(
-                    "Location is not supported by this browser."
-                );
+input.addEventListener('input', () => {
+  const q = input.value.trim();
+  activeGeoSuggestion = null;
+  clearTimeout(debounceTimer);
+  if(q.length < 2){ closeSuggest(); return; }
 
-                return;
-            }
+  const {stateHits, centerHits} = localMatches(q);
+  renderSuggestPanel({stateHits, centerHits, cityHits:[]}, true);
 
-            navigator.geolocation.getCurrentPosition(
+  debounceTimer = setTimeout(async () => {
+    const cityHits = await geocodeSuggestions(q);
+    lastCityHits = cityHits;
+    renderSuggestPanel({stateHits, centerHits, cityHits}, false);
+  }, 250);
+});
 
-                function(position) {
+document.addEventListener('click', (e) => {
+  if(!suggestWrap.contains(e.target)) closeSuggest();
+});
 
-                    const latitude =
-                        position.coords.latitude;
+function showSingleCenter(cname){
+  const center = CENTERS.find(c => c.name.toLowerCase() === cname.toLowerCase());
+  if(!center) return;
+  statusEl.className = 'status';
+  statusEl.textContent = `Showing details for ${center.name}.`;
+  
+  const addrHTML = formatAddress(center.address);
 
-                    const longitude =
-                        position.coords.longitude;
+  resultsEl.innerHTML = `
+    <div class="result-head">
+      <h2>Selected Center</h2>
+      <span class="count">1 center</span>
+    </div>
+    <div class="row nearest expandable" onclick="toggleAddr(this)">
+      <div class="row-badge">1</div>
+      <div class="r-name">${center.name}</div>
+      <div class="r-meta">${center.state} &middot; ${center.region}</div>
+      <div class="addr-collapse">
+        <div class="addr-inner">
+          ${addrHTML}
+        </div>
+      </div>
+      <button class="toggle-btn" type="button" onclick="event.stopPropagation(); toggleAddr(this.closest('.row'))">
+        <span class="lbl">Show Address</span> <span class="chev">&#9660;</span>
+      </button>
+    </div>`;
+}
 
-                    alert(
-                        "Location detected!\n\nLatitude: "
-                        + latitude
-                        + "\nLongitude: "
-                        + longitude
-                    );
+function runStateSearch(stateName){
+  const hits = CENTERS.filter(c => c.state.toLowerCase() === stateName.toLowerCase());
+  statusEl.className = 'status';
+  statusEl.textContent = `Showing all ${hits.length} centers in ${stateName}.`;
 
-                },
+  let html = `<div class="result-head">
+    <h2>Centers in ${stateName}</h2>
+    <span class="count">${hits.length} centers</span>
+  </div>`;
 
-                function() {
+  hits.forEach((c, i) => {
+    const addrHTML = formatAddress(c.address);
+    html += `
+      <div class="row expandable" onclick="toggleAddr(this)">
+        <div class="row-badge">${i+1}</div>
+        <div class="r-name">${c.name}</div>
+        <div class="r-meta">${c.state} &middot; ${c.region}</div>
+        <div class="addr-collapse">
+          <div class="addr-inner">
+            ${addrHTML}
+          </div>
+        </div>
+        <button class="toggle-btn" type="button" onclick="event.stopPropagation(); toggleAddr(this.closest('.row'))">
+          <span class="lbl">Show Address</span> <span class="chev">&#9660;</span>
+        </button>
+      </div>`;
+  });
 
-                    alert(
-                        "Unable to get your location."
-                    );
+  resultsEl.innerHTML = html;
+}
 
-                }
+function formatAddress(addressStr) {
+  if (!addressStr || addressStr === "Address not available yet") {
+    return `<div class="addr-block"><div class="addr-text"><i>Address not available yet</i></div></div>`;
+  }
 
-            );
+  // Handle multi-address cases separated by line breaks or separators
+  const parts = addressStr.split(/_______________________________________________|\n(?=Address \d)/gi);
 
-        }
+  return parts.map(part => {
+    const lines = part.trim().split('\n').filter(Boolean);
+    let title = "Address";
+    let text = part.trim();
 
-    </script>
+    if (lines.length > 1 && lines[0].toLowerCase().startsWith("address")) {
+      title = lines[0].trim();
+      text = lines.slice(1).join('\n').trim();
+    }
 
+    return `
+      <div class="addr-block">
+        <div class="addr-label">${title}</div>
+        <div class="addr-text">${text.replace(/\n/g, '<br>')}</div>
+      </div>`;
+  }).join('<div class="addr-separator"></div>');
+}
+
+function toggleAddr(rowEl){
+  const collapse = rowEl.querySelector('.addr-collapse');
+  const btnLbl = rowEl.querySelector('.toggle-btn .lbl');
+  const chev = rowEl.querySelector('.toggle-btn .chev');
+  
+  if(!collapse) return;
+
+  const isOpen = collapse.style.maxHeight && collapse.style.maxHeight !== '0px';
+
+  if(isOpen){
+    collapse.style.maxHeight = '0px';
+    if(btnLbl) btnLbl.textContent = 'Show Address';
+    if(chev) chev.innerHTML = '&#9660;';
+  } else {
+    collapse.style.maxHeight = collapse.scrollHeight + 'px';
+    if(btnLbl) btnLbl.textContent = 'Hide Address';
+    if(chev) chev.innerHTML = '&#9650;';
+  }
+}
+
+async function runCitySearch(placeName, preGeocoded){
+  btn.disabled = true;
+  statusEl.className = 'status';
+  statusEl.textContent = `Finding "${placeName}"...`;
+  resultsEl.innerHTML = '';
+
+  let geo = preGeocoded;
+  if(!geo){
+    geo = await geocode(placeName);
+  }
+
+  if(!geo){
+    statusEl.className = 'status err';
+    statusEl.textContent = `Could not locate "${placeName}". Try another city name or state.`;
+    btn.disabled = false;
+    return;
+  }
+
+  statusEl.textContent = `Calculating distances from ${geo.label}...`;
+
+  // Calculate straight line distance for sorting
+  const ranked = CENTERS.map(c => {
+    const airKm = haversine(geo.lat, geo.lng, c.lat, c.lng);
+    return { ...c, airKm };
+  }).sort((a,b) => a.airKm - b.airKm);
+
+  // Take top 5 candidates for road distance API
+  const top = ranked.slice(0, 5);
+
+  const roadPromises = top.map(c => roadDistance(geo.lat, geo.lng, c.lat, c.lng));
+  const roadResults = await Promise.all(roadPromises);
+
+  const finalResults = top.map((c, i) => {
+    const road = roadResults[i];
+    return {
+      ...c,
+      km: road ? road.km : c.airKm,
+      mins: road ? road.mins : null,
+      isFallback: !road
+    };
+  }).sort((a,b) => a.km - b.km);
+
+  btn.disabled = false;
+  statusEl.textContent = `Showing nearest Pathshala centers relative to ${geo.label}:`;
+
+  let html = `<div class="result-head">
+    <h2>Nearest Centers to ${geo.label}</h2>
+    <span class="count">${finalResults.length} closest shown</span>
+  </div>`;
+
+  finalResults.forEach((c, i) => {
+    const isNearest = i === 0;
+    const distStr = `${c.km.toFixed(1)} km` + (c.mins ? ` &middot; ~${formatMins(c.mins)} drive` : '');
+    const fallbackTag = c.isFallback ? `<span class="r-dist-fallback">(straight line)</span>` : '';
+    const nearestTag = isNearest ? `<span class="r-tag">Nearest</span>` : '';
+    const addrHTML = formatAddress(c.address);
+
+    html += `
+      <div class="row ${isNearest ? 'nearest' : ''} expandable" onclick="toggleAddr(this)">
+        <div class="row-badge">${i+1}</div>
+        <div class="r-name">${c.name}</div>
+        <div class="r-meta">${c.state} &middot; ${c.region}</div>
+        <div>
+          <span class="r-dist">📍 ${distStr}</span>
+          ${fallbackTag}
+          ${nearestTag}
+        </div>
+        <div class="addr-collapse">
+          <div class="addr-inner">
+            ${addrHTML}
+          </div>
+        </div>
+        <button class="toggle-btn" type="button" onclick="event.stopPropagation(); toggleAddr(this.closest('.row'))">
+          <span class="lbl">Show Address</span> <span class="chev">&#9660;</span>
+        </button>
+      </div>`;
+  });
+
+  resultsEl.innerHTML = html;
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  closeSuggest();
+  const q = input.value.trim();
+  if(!q) return;
+
+  const exactState = STATES.find(s => s.toLowerCase() === q.toLowerCase());
+  if(exactState){
+    runStateSearch(exactState);
+    return;
+  }
+
+  const exactCenter = CENTERS.find(c => c.name.toLowerCase() === q.toLowerCase());
+  if(exactCenter){
+    showSingleCenter(exactCenter.name);
+    return;
+  }
+
+  runCitySearch(q, activeGeoSuggestion);
+});
+</script>
 </body>
 </html>
