@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pathshala Centers | Physics Wallah</title>
+<title>PW Center Finder | Pathshala & Vidyapeeth</title>
 <style>
   :root{
     --navy:#0a1a3f;
@@ -342,6 +342,20 @@
     color:var(--sub);
     font-style:italic;
   }
+  .r-type{
+    display:inline-block;
+    margin-top:7px;
+    margin-right:6px;
+    font-size:10px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    background:#e8f0ff;
+    color:#1e4bb8;
+    padding:4px 8px;
+    border-radius:20px;
+    font-weight:800;
+  }
+  .r-type.vidyapeeth{background:#eafbf1;color:#176b48;}
   .r-tag{
     display:inline-block;
     margin-top:9px;
@@ -420,8 +434,8 @@
     <div class="wordmark">PHYSICS <span>WALLAH</span></div>
   </div>
   <div class="tagline">
-    <div class="eyebrow">Pathshala Centers &middot; Center Locator</div>
-    <h1>Find your nearest Pathshala Center</h1>
+    <div class="eyebrow">Pathshala &amp; Vidyapeeth &middot; Center Locator</div>
+    <h1>Find your nearest PW Center</h1>
     <p>Type any city, state, or center name — even a rough spelling works. We'll surface matches as you type and show the nearest centers with distance.</p>
     <div class="accent-line"></div>
   </div>
@@ -437,7 +451,7 @@
         <div class="suggest-panel" id="suggestPanel"></div>
       </div>
     </form>
-    <div class="hint">Tip: search a state name (e.g. "Odisha") to see every center in that state.</div>
+    <div class="hint">Tip: search a state name (e.g. "Odisha") to see every Pathshala and Vidyapeeth center in that state.</div>
   </div>
 
   <div class="steps-card">
@@ -553,7 +567,102 @@ const CENTERS = [
   {name:"Jorhat", state:"Assam", region:"Region 9 (Assam)", lat:26.7509, lng:94.2037, address:"2nd Floor, Abhinash Bibah Bhawan, Old Circuit House Road, Near Chandra Prabha Eye Hospital, Jorhat, Assam-785001"},
 ];
 
-const STATES = [...new Set(CENTERS.map(c => c.state))].sort();
+let STATES = [...new Set(CENTERS.map(c => c.state))].sort();
+
+// Vidyapeeth data is loaded from the Google Sheet through Apps Script.
+// Existing Pathshala records above are kept unchanged.
+const VIDYAPEETH_API_URL = "https://script.google.com/macros/s/AKfycbzJzlqv41k-zW01ZwZlVOgaxRGAmRZ0Ny7EJC2t5q3XKZt2cAR7zRFAwM9NwXk05QJA/exec";
+
+function parseSheetCoordinate(value) {
+  const text = String(value || "").trim();
+  const match = text.match(/-?\\d+(?:\\.\\d+)?/);
+  if (!match) return null;
+  let number = Number(match[0]);
+  if (/[SW]\\s*$/i.test(text)) number = -Math.abs(number);
+  return Number.isFinite(number) ? number : null;
+}
+
+function loadVidyapeethCenters() {
+  return new Promise((resolve) => {
+    const callbackName = "pwCenterFinderCallback";
+    const timeout = setTimeout(() => {
+      cleanup();
+      console.warn("Vidyapeeth data did not load. Showing Pathshala centres only.");
+      resolve(false);
+    }, 15000);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      const script = document.getElementById("vidyapeeth-data-script");
+      if (script) script.remove();
+      try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
+    }
+
+    window[callbackName] = function(rows) {
+      cleanup();
+      try {
+        if (!Array.isArray(rows)) throw new Error("Unexpected response from centre sheet");
+
+        const existing = new Set(CENTERS.map(c =>
+          `${String(c.name).trim().toLowerCase()}|${String(c.state).trim().toLowerCase()}|pathshala`
+        ));
+
+        const vidyapeeth = rows.map(row => {
+          const name = String(row["Center Name"] || "").trim();
+          const state = String(row["State"] || "").trim();
+          const region = String(row["Region"] || "").trim();
+          const address = String(row["Address"] || "").trim();
+          const lat = parseSheetCoordinate(row["Latitude"]);
+          const lng = parseSheetCoordinate(row["Longitude"]);
+          const type = String(row["Center Type"] || "Vidyapeeth").trim();
+
+          if (!name || !state || type.toLowerCase() !== "vidyapeeth") return null;
+          return { name, state, region, address, lat, lng, type: "Vidyapeeth" };
+        }).filter(c => c && !CENTERS.some(old =>
+          old.name.trim().toLowerCase() === c.name.toLowerCase() &&
+          old.state.trim().toLowerCase() === c.state.toLowerCase() &&
+          old.type === "Vidyapeeth"
+        ));
+
+        CENTERS.push(...vidyapeeth);
+        STATES = [...new Set(CENTERS.map(c => String(c.state || "").trim()).filter(Boolean))].sort();
+        console.info(`Loaded ${vidyapeeth.length} Vidyapeeth centres from Google Sheets.`);
+        resolve(true);
+      } catch (error) {
+        console.error("Could not process Vidyapeeth data:", error);
+        resolve(false);
+      }
+    };
+
+    const script = document.createElement("script");
+    script.id = "vidyapeeth-data-script";
+    script.src = `${VIDYAPEETH_API_URL}?callback=${callbackName}`;
+    script.onerror = () => {
+      cleanup();
+      console.warn("Could not connect to Vidyapeeth Google Sheet.");
+      resolve(false);
+    };
+    document.head.appendChild(script);
+  });
+}
+
+function centerTypeLabel(center) {
+  return center.type === "Vidyapeeth" ? "Vidyapeeth" : "Pathshala";
+}
+
+function centerTypeBadge(center) {
+  const type = centerTypeLabel(center);
+  const className = type === "Vidyapeeth" ? "r-type vidyapeeth" : "r-type";
+  return `<span class="${className}">${type}</span>`;
+}
+
+loadVidyapeethCenters().then(loaded => {
+  if (loaded) {
+    const status = document.getElementById("status");
+    status.textContent = `Loaded ${CENTERS.filter(c => c.type === "Vidyapeeth").length} Vidyapeeth centres from the live sheet.`;
+    setTimeout(() => { if (status.textContent.startsWith("Loaded ")) status.textContent = ""; }, 5000);
+  }
+});
 
 const form = document.getElementById('f');
 const input = document.getElementById('cityInput');
@@ -637,7 +746,7 @@ async function geocodeSuggestions(place){
 function localMatches(q){
   const qq = q.toLowerCase();
   const stateHits = STATES.filter(s => s.toLowerCase().includes(qq))
-    .map(s => ({type:'state', label:s, sub: `${CENTERS.filter(c=>c.state===s).length} centers`}));
+    .map(s => ({type:'state', label:s, sub: `${CENTERS.filter(c=>String(c.state).trim()===s).length} centers`}));
   const centerHits = CENTERS.filter(c => c.name.toLowerCase().includes(qq))
     .map(c => ({type:'center', label:c.name, sub:`${c.state} · ${c.region}`, lat:c.lat, lng:c.lng}));
   return {stateHits, centerHits};
@@ -741,7 +850,7 @@ function showSingleCenter(cname){
     <div class="row nearest expandable" onclick="toggleAddr(this)">
       <div class="row-badge">1</div>
       <div class="r-name">${center.name}</div>
-      <div class="r-meta">${center.state} &middot; ${center.region}</div>
+      <div class="r-meta">${center.state} &middot; ${center.region}</div>${centerTypeBadge(center)}
       <div class="addr-collapse">
         <div class="addr-inner">
           ${addrHTML}
@@ -754,7 +863,7 @@ function showSingleCenter(cname){
 }
 
 function runStateSearch(stateName){
-  const hits = CENTERS.filter(c => c.state.toLowerCase() === stateName.toLowerCase());
+  const hits = CENTERS.filter(c => String(c.state).trim().toLowerCase() === stateName.trim().toLowerCase());
   statusEl.className = 'status';
   statusEl.textContent = `Showing all ${hits.length} centers in ${stateName}.`;
 
@@ -769,7 +878,7 @@ function runStateSearch(stateName){
       <div class="row expandable" onclick="toggleAddr(this)">
         <div class="row-badge">${i+1}</div>
         <div class="r-name">${c.name}</div>
-        <div class="r-meta">${c.state} &middot; ${c.region}</div>
+        <div class="r-meta">${c.state} &middot; ${c.region}</div>${centerTypeBadge(c)}
         <div class="addr-collapse">
           <div class="addr-inner">
             ${addrHTML}
@@ -873,7 +982,7 @@ async function runCitySearch(placeName, preGeocoded){
   }).sort((a,b) => a.km - b.km);
 
   btn.disabled = false;
-  statusEl.textContent = `Showing nearest Pathshala centers relative to ${geo.label}:`;
+  statusEl.textContent = `Showing nearest Pathshala and Vidyapeeth centers relative to ${geo.label}:`;
 
   let html = `<div class="result-head">
     <h2>Nearest Centers to ${geo.label}</h2>
@@ -891,7 +1000,7 @@ async function runCitySearch(placeName, preGeocoded){
       <div class="row ${isNearest ? 'nearest' : ''} expandable" onclick="toggleAddr(this)">
         <div class="row-badge">${i+1}</div>
         <div class="r-name">${c.name}</div>
-        <div class="r-meta">${c.state} &middot; ${c.region}</div>
+        <div class="r-meta">${c.state} &middot; ${c.region}</div>${centerTypeBadge(c)}
         <div>
           <span class="r-dist">📍 ${distStr}</span>
           ${fallbackTag}
@@ -917,7 +1026,7 @@ form.addEventListener('submit', (e) => {
   const q = input.value.trim();
   if(!q) return;
 
-  const exactState = STATES.find(s => s.toLowerCase() === q.toLowerCase());
+  const exactState = STATES.find(s => s.trim().toLowerCase() === q.toLowerCase());
   if(exactState){
     runStateSearch(exactState);
     return;
