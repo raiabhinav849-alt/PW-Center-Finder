@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PW Center Finder | Find Your Nearest Centre</title>
+<title>PW Center Finder | Your Dream Learning Center</title>
 <style>
   :root{
     --navy:#274245;
@@ -579,6 +579,95 @@
     .topbar::after{background:linear-gradient(90deg,rgba(32,63,64,.97),rgba(32,63,64,.80));}
   }
 
+
+
+  /* Final study-inspired cream + purple theme; search logic remains unchanged. */
+  :root{
+    --navy:#102a43;
+    --navy-2:#172f4d;
+    --amber:#ffd76a;
+    --amber-deep:#f4b400;
+    --bg:#fff8ee;
+    --ink:#102a43;
+    --sub:#778396;
+    --line:#e7e7f1;
+    --card:#ffffff;
+    --good:#159b76;
+    --purple:#6739ef;
+    --purple-dark:#5425db;
+  }
+  body{background:#fff8ee;color:#102a43;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;}
+  .topbar{min-height:530px;padding:28px 28px 94px;background:#fff7ea;position:relative;overflow:hidden;isolation:isolate;}
+  .topbar::before{content:"";position:absolute;z-index:0;inset:0;width:100%;height:100%;background-size:cover;background-position:72% center;background-repeat:no-repeat;opacity:1;clip-path:none;}
+  .topbar::after{content:"";position:absolute;z-index:1;inset:0;width:100%;height:100%;pointer-events:none;background:linear-gradient(90deg,#fff8ee 0%,rgba(255,248,238,.98) 33%,rgba(255,248,238,.82) 47%,rgba(255,248,238,.24) 69%,rgba(255,248,238,.02) 100%);}
+  .hero-shell{max-width:1280px;min-height:395px;margin:0 auto;position:relative;z-index:2;}
+  .brandrow{max-width:none;margin:0;gap:12px;align-items:center;}
+  .logo-mark{width:42px;height:42px;border-radius:50%;background:#101010;color:#fff;font-family:Georgia,serif;font-size:20px;border:2px solid #fff;box-shadow:0 0 0 1px #101010;}
+  .wordmark{font-size:20px;letter-spacing:.015em;color:#102a43;font-weight:850;}
+  .wordmark span{color:var(--purple);}
+  .brand-divider{display:none;}
+  .brand-caption{display:block;color:#102a43;font-size:10px;letter-spacing:.14em;font-weight:800;}
+  .tagline{max-width:700px;margin:48px 0 0;color:#102a43;position:relative;z-index:2;}
+  .tagline .eyebrow{display:block;font-size:11px;letter-spacing:.12em;color:#102a43;font-weight:800;margin-bottom:15px;}
+  .eyebrow-line{display:none;}
+  .tagline h1{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:clamp(38px,4.5vw,62px);line-height:.99;letter-spacing:-.045em;font-weight:850;margin:0 0 18px;max-width:690px;color:#102a43;}
+  .tagline h1 em{font-weight:850;color:var(--purple);font-style:normal;}
+  .tagline p{font-size:17px;line-height:1.55;color:#203955;max-width:620px;margin:0;}
+  .tagline p strong{font-weight:800;color:#102a43;}
+  .hero-foot{display:none;}
+  .content{max-width:1280px;padding:0 28px 38px;position:relative;z-index:4;}
+  .search-card{border-radius:17px;border:1px solid #eeeaf5;box-shadow:0 15px 38px rgba(36,34,66,.12);padding:16px;margin-top:-70px;background:rgba(255,255,255,.97);}
+  .search-row{gap:12px;align-items:stretch;}
+  .search-icon{left:18px;color:var(--purple);font-size:19px;}
+  input[type=text]{border-radius:12px;border:1px solid #e6e7f0;background:#fff;color:#102a43;padding:17px 18px 17px 48px;font-size:16px;min-width:0;}
+  input[type=text]::placeholder{color:#8791a3;opacity:1;}
+  input[type=text]:focus{border-color:var(--purple);box-shadow:0 0 0 4px rgba(103,57,239,.12);background:#fff;}
+  button.go{border-radius:11px;background:linear-gradient(135deg,#7846ff,#5726e8);color:#fff;padding:0 26px;font-weight:750;box-shadow:0 5px 12px rgba(103,57,239,.18);}
+  button.go:hover{background:var(--purple-dark);transform:translateY(-1px);}
+  .hint{font-size:12px;color:#7c8798;margin:10px 4px 0;}
+  .feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0 30px;}
+  .feature-card{display:flex;align-items:center;gap:15px;min-height:105px;padding:18px;border:1px solid rgba(20,40,70,.04);border-radius:15px;box-shadow:0 6px 18px rgba(34,40,65,.045);}
+  .feature-purple{background:linear-gradient(135deg,#fbf1ff,#f6efff);}
+  .feature-yellow{background:linear-gradient(135deg,#fff8e8,#fffaf0);}
+  .feature-green{background:linear-gradient(135deg,#effbf5,#f8fff9);}
+  .feature-icon{width:58px;height:58px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:34px;font-weight:800;}
+  .feature-purple .feature-icon{background:#eadbff;color:var(--purple);}
+  .feature-yellow .feature-icon{background:#fff0c7;color:#f2b500;}
+  .feature-green .feature-icon{background:#d9f5e6;color:#14a879;}
+  .feature-card h3{font-size:15px;line-height:1.3;margin:0 0 6px;font-weight:800;color:#102a43;}
+  .feature-purple h3{color:var(--purple);}
+  .feature-card p{font-size:12.5px;line-height:1.55;margin:0;color:#2b405c;}
+  .steps-card{border-radius:14px;border:1px solid #e8e8f0;background:#fff;padding:22px;}
+  .steps-title{color:var(--purple);}
+  .step-num{background:var(--purple);color:#fff;}
+  .row{border-radius:14px;border-color:#e6e8f0;background:#fff;}
+  .row.nearest{border-color:#cbbaff;background:linear-gradient(110deg,#fff,#faf7ff);}
+  .r-tag{background:#eee6ff;color:#5425db;}
+  .center-type{color:#5e35d9;letter-spacing:.04em;}
+  .status{color:#778396;}
+  footer{color:#8993a3;letter-spacing:0;font-size:12px;line-height:1.9;padding:18px 12px 0;border-top:1px solid #f0edf4;margin-top:24px;}
+  footer b{color:#33445c;}
+  .suggest-panel{border-radius:12px;box-shadow:0 15px 35px rgba(25,31,55,.14);border-color:#e7e4f1;}
+  @media(max-width:800px){
+    .topbar{min-height:500px;padding:22px 18px 90px;}
+    .topbar::before{background-position:70% center;opacity:.5;}
+    .topbar::after{background:linear-gradient(90deg,rgba(255,248,238,.98),rgba(255,248,238,.9) 58%,rgba(255,248,238,.55));}
+    .hero-shell{min-height:365px;}
+    .brand-caption{font-size:8px;letter-spacing:.08em;}
+    .wordmark{font-size:16px;}
+    .tagline{margin-top:38px;max-width:100%;}
+    .tagline h1{font-size:clamp(36px,9vw,52px);}
+    .tagline p{font-size:14px;max-width:45ch;}
+    .content{padding:0 14px 30px;}
+    .search-card{margin-top:-58px;padding:13px;}
+    .search-row{flex-wrap:wrap;}
+    input[type=text]{width:100%;flex-basis:100%;font-size:14px;}
+    button.go{min-height:48px;width:100%;}
+    .feature-grid{grid-template-columns:1fr;gap:10px;margin-top:14px;}
+    .feature-card{min-height:84px;padding:14px;}
+    .feature-icon{width:48px;height:48px;font-size:28px;}
+  }
+
 </style>
 </head>
 <body>
@@ -589,13 +678,12 @@
       <div class="logo-mark">P</div>
       <div class="wordmark">PHYSICS <span>WALLAH</span></div>
       <div class="brand-divider"></div>
-      <div class="brand-caption">CENTRE DIRECTORY <span>·</span> INDIA</div>
+      <div class="brand-caption">PATHSHALA &amp; VIDYAPEETH CENTER FINDER</div>
     </div>
     <div class="tagline">
-      <div class="eyebrow"><span class="eyebrow-line"></span> PATHSHALA &amp; VIDYAPEETH</div>
-      <h1>Find your <em>nearest</em><br>PW learning centre.</h1>
-      <p>Search by city, state or centre name. Compare nearby locations, road distances and addresses in one place.</p>
-      <div class="hero-foot"><span class="hero-dot"></span> SMART CENTRE LOCATOR <span class="hero-foot-rule"></span> DISTANCE-BASED RESULTS</div>
+      <div class="eyebrow">PATHSHALA &amp; VIDYAPEETH CENTER FINDER</div>
+      <h1>Your Dream<br><em>Learning Center</em><br>is Closer Than You Think</h1>
+      <p>Search by city or state to find the nearest <strong>Pathshala</strong> and <strong>Vidyapeeth</strong> centers with distance and estimated travel time.</p>
     </div>
   </div>
 </div>
@@ -605,29 +693,26 @@
     <form id="f" autocomplete="off">
       <div class="search-row suggest" id="suggestWrap">
         <span class="search-icon">&#128269;</span>
-        <input type="text" id="cityInput" placeholder="Search a city, state, or center..." autocomplete="off">
+        <input type="text" id="cityInput" placeholder="Enter a city or state (e.g. Varanasi, Delhi, Maharashtra)" autocomplete="off">
         <button type="submit" class="go" id="btn">Search</button>
         <div class="suggest-panel" id="suggestPanel"></div>
       </div>
     </form>
-    <div class="hint">Tip: search a state name (e.g. "Odisha") to see every center in that state.</div>
+    <div class="hint">Search by city, state, or center name to explore nearby learning centers.</div>
   </div>
 
-  <div class="steps-card">
-    <div class="steps-title">How to use</div>
-    <div class="steps-grid">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text"><b>Type</b> your city, village, state, or a center name in the search box above.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text"><b>Pick</b> a suggestion from the dropdown, or just hit <b>Search</b>.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text"><b>View</b> your nearest centers, ranked by real road distance &amp; drive time.</div>
-      </div>
+  <div class="feature-grid" aria-label="Center finder features">
+    <div class="feature-card feature-purple">
+      <div class="feature-icon">⌖</div>
+      <div><h3>All Centers in One Place</h3><p>Explore Pathshala &amp; Vidyapeeth centers across India.</p></div>
+    </div>
+    <div class="feature-card feature-yellow">
+      <div class="feature-icon">↗</div>
+      <div><h3>Road Distance</h3><p>View available driving distances and estimated travel time.</p></div>
+    </div>
+    <div class="feature-card feature-green">
+      <div class="feature-icon">ϟ</div>
+      <div><h3>Quick &amp; Easy Search</h3><p>Search by any city, state, or center name.</p></div>
     </div>
   </div>
 
